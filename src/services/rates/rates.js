@@ -19,13 +19,9 @@ export const ratesMethods = ['find', 'get', 'create', 'patch', 'remove','getFiat
 export * from './rates.class.js'
 export * from './rates.schema.js'
 
-// A configure function that registers the service and its hooks via `app.configure`
 export const rates = app => {
-  // Register our service on the Feathers application
   app.use(ratesPath, new RatesService(getOptions(app), app), {
-    // A list of all methods this service exposes externally
     methods: ratesMethods,
-    // You can add additional custom events to be sent to clients here
     events: []
   })
   // Initialize hooks

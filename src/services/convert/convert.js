@@ -20,7 +20,6 @@ export * from './convert.class.js'
 export * from './convert.schema.js'
 
 export const convert = app => {
-  // Register our service on the Feathers application
   app.use(convertPath, new ConvertService(getOptions(app), app), {
     methods: convertMethods,
     events: []
@@ -36,8 +35,6 @@ export const convert = app => {
       find: [],
       get: [],
       create: [
-        // schemaHooks.validateData(convertDataValidator),
-        // schemaHooks.resolveData(convertDataResolver)
       ],
       patch: [schemaHooks.validateData(convertPatchValidator), schemaHooks.resolveData(convertPatchResolver)],
       remove: []

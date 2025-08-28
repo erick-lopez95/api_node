@@ -1,4 +1,3 @@
-// report.class.js - Usar import en lugar de require
 import PDFDocument from 'pdfkit';
 
 export class ReportService {
@@ -103,13 +102,11 @@ export class ReportService {
       });
       doc.on('error', reject);
       
-      // Mejorar el contenido del PDF para conversiones de moneda
       doc.fontSize(20).text('Daily Currency Conversions Report', 100, 80);
       doc.fontSize(12).text(`Report Date: ${new Date().toLocaleDateString()}`, 100, 110);
       doc.text(`Total conversions today: ${conversions.length}`, 100, 130);
       doc.moveDown();
 
-      // Encabezados de la tabla
       doc.font('Helvetica-Bold');
       doc.text('#', 50, 180);
       doc.text('From', 80, 180);
@@ -126,7 +123,6 @@ export class ReportService {
         if (yPosition > 700) {
           doc.addPage();
           yPosition = 100;
-          // Volver a dibujar encabezados en nueva página
           doc.font('Helvetica-Bold');
           doc.text('#', 50, 80);
           doc.text('From', 80, 80);
@@ -150,7 +146,6 @@ export class ReportService {
         yPosition += 25;
       });
       
-      // Agregar totales al final
       doc.moveTo(50, yPosition + 10).lineTo(550, yPosition + 10).stroke();
       
       const totalAmount = conversions.reduce((sum, conv) => sum + (conv.amount || 0), 0);

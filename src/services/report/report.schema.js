@@ -3,7 +3,7 @@ import { resolve, getValidator, querySyntax } from '@feathersjs/schema'
 import { ObjectIdSchema } from '@feathersjs/schema'
 import { dataValidator, queryValidator } from '../../validators.js'
 
-// Main data model schema - Actualizado para el servicio de reportes
+// Main data model schema
 export const reportSchema = {
   $id: 'Report',
   type: 'object',

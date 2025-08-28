@@ -19,13 +19,9 @@ export const fiatRatesMethods = ['find', 'get', 'create', 'patch', 'remove']
 export * from './fiat-rates.class.js'
 export * from './fiat-rates.schema.js'
 
-// A configure function that registers the service and its hooks via `app.configure`
 export const fiatRates = app => {
-  // Register our service on the Feathers application
   app.use(fiatRatesPath, new FiatRatesService(getOptions(app), app), {
-    // A list of all methods this service exposes externally
     methods: fiatRatesMethods,
-    // You can add additional custom events to be sent to clients here
     events: []
   })
   // Initialize hooks

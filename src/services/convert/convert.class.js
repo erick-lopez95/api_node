@@ -162,12 +162,10 @@ export class ConvertService extends MongoDBService {
     }
   }
 
-  // Métodos para obtener tasas de diferentes tipos
   async getCryptoToFiatRate(crypto, fiat) {
     try {
       const cryptoRatesService = this.app.service('crypto-rates');
       
-      // Convertir símbolo a ID de crypto (ej: BTC → bitcoin)
       const cryptoId = this.getCryptoIdFromSymbol(crypto);
       if (!cryptoId) {
         throw new Error(`Criptomoneda ${crypto} no reconocida`);
@@ -175,7 +173,7 @@ export class ConvertService extends MongoDBService {
       
       const latestRates = await cryptoRatesService.find({
         query: {
-          crypto_id: cryptoId, // Usar el ID (bitcoin, ethereum)
+          crypto_id: cryptoId, 
           $sort: { timestamp: -1 },
           $limit: 1
         }
@@ -202,7 +200,6 @@ export class ConvertService extends MongoDBService {
 
   async getFiatToCryptoRate(fiat, crypto) {
     try {
-      // Para fiat → crypto, usamos 1/tasa (inverso)
       const rate = await this.getCryptoToFiatRate(crypto, fiat);
       return 1 / rate;
       
@@ -214,7 +211,6 @@ export class ConvertService extends MongoDBService {
 
   async getCryptoToCryptoRate(fromCrypto, toCrypto) {
     try {
-      // Crypto → Crypto: Convertir through USD
       const fromCryptoToUsd = await this.getCryptoToFiatRate(fromCrypto, 'USD');
       const toCryptoToUsd = await this.getCryptoToFiatRate(toCrypto, 'USD');
       

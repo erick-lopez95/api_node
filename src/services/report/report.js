@@ -1,4 +1,4 @@
-// For more information about this file see https://dove.feathersjs.com/guides/cli/service.html
+// report.js - Solución con middleware Express
 import { hooks as schemaHooks } from '@feathersjs/schema'
 import {
   reportDataValidator,
@@ -25,7 +25,50 @@ export const report = (app) => {
     events: []
   })
   
-  // Initialize hooks
+  // ✅ Middleware Express personalizado para interceptar respuestas PDF
+  app.use(`/${reportPath}`, (req, res, next) => {
+    // Guardar los métodos originales
+    const originalJson = res.json;
+    const originalSend = res.send;
+    
+    // Override de res.json
+    res.json = function(data) {
+      if (data && data.isPDF) {
+        console.log('📄 Intercepting PDF response in middleware');
+        try {
+          res.setHeader('Content-Type', data.contentType || 'application/pdf');
+          res.setHeader('Content-Disposition', `attachment; filename="${data.filename}"`);
+          originalSend.call(this, data.pdfBuffer);
+        } catch (error) {
+          console.error('Error in PDF middleware:', error);
+          originalJson.call(this, data);
+        }
+      } else {
+        originalJson.call(this, data);
+      }
+    };
+    
+    // Override de res.send
+    res.send = function(data) {
+      if (data && data.isPDF) {
+        console.log('📄 Intercepting PDF response in middleware');
+        try {
+          res.setHeader('Content-Type', data.contentType || 'application/pdf');
+          res.setHeader('Content-Disposition', `attachment; filename="${data.filename}"`);
+          originalSend.call(this, data.pdfBuffer);
+        } catch (error) {
+          console.error('Error in PDF middleware:', error);
+          originalSend.call(this, data);
+        }
+      } else {
+        originalSend.call(this, data);
+      }
+    };
+    
+    next();
+  });
+  
+  // Initialize hooks (simplificados sin manejo de PDF)
   app.service(reportPath).hooks({
     around: {
       all: [
@@ -54,37 +97,6 @@ export const report = (app) => {
         schemaHooks.resolveData(reportPatchResolver)
       ],
       remove: []
-    },
-    after: {
-      find: [
-        async context => {
-          try {
-            // ✅ Verificar si estamos en contexto HTTP/REST y response existe
-            const isHttpRequest = context.params && context.params.provider === 'rest';
-            const hasResponse = context.response && typeof context.response.setHeader === 'function';
-            
-            if (context.result && context.result.isPDF && isHttpRequest && hasResponse) {
-              console.log('Setting PDF headers for download');
-              
-              // Configurar headers para descarga de PDF
-              context.response.setHeader('Content-Type', context.result.contentType || 'application/pdf');
-              context.response.setHeader('Content-Disposition', `attachment; filename="${context.result.filename}"`);
-              
-              // ✅ Enviar solo el buffer PDF
-              context.result = context.result.pdfBuffer;
-            } else if (context.result && context.result.isPDF && !isHttpRequest) {
-              // ✅ Para llamadas internas (no HTTP), mantener la estructura completa
-              console.log('Internal call - keeping PDF structure intact');
-              // No hacer nada, mantener el objeto completo con metadata
-            }
-            // ✅ Si no es PDF, mantener la respuesta original
-          } catch (error) {
-            console.error('Error in after hook:', error);
-            // No lanzar error para no interrumpir el flujo
-          }
-          return context;
-        }
-      ]
     },
     error: {
       all: [
