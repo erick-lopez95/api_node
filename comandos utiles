@@ -1,0 +1,15 @@
+inicio con debug
+node --inspect src/index.js
+
+pagina chrome para debug
+chrome://inspect
+
+inicio en modo desarollo
+npm run dev
+
+
+inicio produccion
+npm start
+
+crear nuevo servicio
+feathers generate service
