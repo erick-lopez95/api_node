@@ -12,6 +12,7 @@ import {
   convertQueryResolver
 } from './convert.schema.js'
 import { ConvertService, getOptions } from './convert.class.js'
+import { sendToQueue } from '../../hooks/send-to-queue.js'
 
 export const convertPath = 'convert'
 export const convertMethods = ['find', 'get', 'create', 'patch', 'remove']
@@ -40,7 +41,10 @@ export const convert = app => {
       remove: []
     },
     after: {
-      all: []
+      all: [],
+      create: [
+        sendToQueue()
+      ]
     },
     error: {
       all: []

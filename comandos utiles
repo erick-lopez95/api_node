@@ -13,3 +13,6 @@ npm start
 
 crear nuevo servicio
 feathers generate service
+
+ejecutar pruebas
+npm run test:queue

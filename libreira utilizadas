@@ -5,3 +5,6 @@ npm install node-fetch
 npm install joi
 npm install pdfmake
 npm install pdfkit
+npm install amqplib
+npm install --save-dev jest @jest/globals
+npm install --save-dev jest @babel/core @babel/preset-env babel-jest
